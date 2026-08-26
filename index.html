@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universo e Futuro</title>
+    <style>
+        /* Importação de uma fonte futurista do Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            overflow: hidden;
+            font-family: 'Orbitron', sans-serif;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #starfield {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            text-shadow: 0 0 10px #00e6ff, 0 0 20px #00e6ff;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin: 0;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            animation: pulse 2s infinite alternate;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-top: 15px;
+            color: #b3e5fc;
+            letter-spacing: 2px;
+        }
+
+        /* Efeito de respiração/brilho no texto principal */
+        @keyframes pulse {
+            0% { opacity: 0.8; text-shadow: 0 0 10px #00e6ff; }
+            100% { opacity: 1; text-shadow: 0 0 30px #00e6ff, 0 0 50px #00e6ff; }
+        }
+
+        #start-btn {
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background: rgba(0, 230, 255, 0.1);
+            color: #00e6ff;
+            border: 2px solid #00e6ff;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        #start-btn:hover {
+            background: #00e6ff;
+            color: #000;
+            box-shadow: 0 0 20px #00e6ff, 0 0 40px #00e6ff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fundo dinâmico processado via JavaScript -->
+    <canvas id="starfield"></canvas>
+
+    <!-- Conteúdo central -->
+    <div class="content">
+        <h1>O Futuro Começa Aqui</h1>
+        <p>Explore as fronteiras do universo digital</p>
+        <button id="start-btn">Iniciar Jornada</button>
+    </div>
+
+    <!-- Música de fundo (Substitui o 'src' pelo ficheiro mp3 pretendido) -->
+    <audio id="bg-music" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Lógica de ativação do áudio e ocultação do botão
+        const btn = document.getElementById('start-btn');
+        const audio = document.getElementById('bg-music');
+        
+        btn.addEventListener('click', () => {
+            audio.play();
+            btn.style.opacity = '0';
+            setTimeout(() => { btn.style.display = 'none'; }, 300);
+        });
+
+        // Lógica do efeito dinâmico de viagem espacial (Warp Speed)
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let w, h;
+        const stars = [];
+        const numStars = 400; // Quantidade de estrelas
+
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Inicializar estrelas com posições 3D (x, y, z)
+        for(let i = 0; i < numStars; i++) {
+            stars.push({
+                x: Math.random() * w,
+                y: Math.random() * h,
+                z: Math.random() * w
+            });
+        }
+
+        function animate() {
+            // Fundo escuro com ligeira transparência para deixar rasto de movimento
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.fillRect(0, 0, w, h);
+            
+            const cx = w / 2;
+            const cy = h / 2;
+            
+            ctx.fillStyle = '#ffffff';
+            
+            for(let i = 0; i < stars.length; i++) {
+                let s = stars[i];
+                s.z -= 4; // Velocidade da viagem
+                
+                // Reposiciona a estrela no fundo quando passa pela "câmera"
+                if(s.z <= 0) {
+                    s.x = Math.random() * w;
+                    s.y = Math.random() * h;
+                    s.z = w;
+                }
+                
+                // Perspetiva 3D para 2D
+                let k = 128.0 / s.z;
+                let px = (s.x - cx) * k + cx;
+                let py = (s.y - cy) * k + cy;
+                
+                // Aumenta o tamanho da estrela à medida que se aproxima
+                let radius = (1 - s.z / w) * 2;
+                
+                if(px >= 0 && px <= w && py >= 0 && py <= h) {
+                    ctx.beginPath();
+                    ctx.arc(px, py, radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+    </script>
+</body>
+</html>
