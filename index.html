@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Viagem Espacial</title>
+    <title>Viagem Espacial Relaxante</title>
     <style>
         body, html {
             margin: 0;
@@ -15,7 +15,7 @@
         }
 
         #starfield {
-            display: block; /* Remove margens invisíveis do canvas */
+            display: block;
             width: 100%;
             height: 100%;
         }
@@ -30,9 +30,8 @@
         const ctx = canvas.getContext('2d');
         let w, h;
         const stars = [];
-        const numStars = 400; // Quantidade de estrelas
+        const numStars = 400; 
 
-        // Ajusta o tamanho do canvas ao ecrã
         function resize() {
             w = canvas.width = window.innerWidth;
             h = canvas.height = window.innerHeight;
@@ -40,7 +39,6 @@
         window.addEventListener('resize', resize);
         resize();
 
-        // Inicializar estrelas com posições 3D (x, y, z)
         for(let i = 0; i < numStars; i++) {
             stars.push({
                 x: Math.random() * w,
@@ -49,10 +47,10 @@
             });
         }
 
-        // Animação
         function animate() {
-            // Fundo escuro com ligeira transparência para deixar rasto de movimento
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            // Um fundo com transparência ligeiramente menor (0.1 em vez de 0.2) 
+            // também ajuda a criar um rasto mais longo e suave
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
             ctx.fillRect(0, 0, w, h);
             
             const cx = w / 2;
@@ -62,24 +60,22 @@
             
             for(let i = 0; i < stars.length; i++) {
                 let s = stars[i];
-                s.z -= 4; // Velocidade da viagem
                 
-                // Reposiciona a estrela no fundo quando passa pela "câmera"
+                // VELOCIDADE ALTERADA AQUI: de 4 para 0.5 para um efeito relaxante
+                s.z -= 0.5; 
+                
                 if(s.z <= 0) {
                     s.x = Math.random() * w;
                     s.y = Math.random() * h;
                     s.z = w;
                 }
                 
-                // Perspetiva 3D para 2D
                 let k = 128.0 / s.z;
                 let px = (s.x - cx) * k + cx;
                 let py = (s.y - cy) * k + cy;
                 
-                // Aumenta o tamanho da estrela à medida que se aproxima
-                let radius = (1 - s.z / w) * 2;
+                let radius = (1 - s.z / w) * 1.5; // Raio ligeiramente menor para maior delicadeza
                 
-                // Desenha a estrela se estiver dentro do ecrã
                 if(px >= 0 && px <= w && py >= 0 && py <= h) {
                     ctx.beginPath();
                     ctx.arc(px, py, radius, 0, Math.PI * 2);
